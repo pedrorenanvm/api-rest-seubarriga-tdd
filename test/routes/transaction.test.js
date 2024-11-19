@@ -51,6 +51,29 @@ test('Deve inserir uma transação com sucesso', () => {
       expect(res.body.ammount).toBe('100.00');
   });
 });
+
+test('Transações de entrada devem ser positivas', () => {
+  return request(app).post(MAIN_ROUTE)
+    .set('authorization', `bearer ${user.token}`)
+    .send({ description: 'New T', date: new Date(), ammount: -100, type: 'I', acc_id: accUser.id })
+    .then((res) => {
+      expect(res.status).toBe(201);
+      expect(res.body.acc_id).toBe(accUser.id);
+      expect(res.body.ammount).toBe('100.00');
+    });
+});
+
+test('Transações de saída devem ser negativas', () => {
+  return request(app).post(MAIN_ROUTE)
+    .set('authorization', `bearer ${user.token}`)
+    .send({ description: 'New T', date: new Date(), ammount: 100, type: 'O', acc_id: accUser.id })
+    .then((res) => {
+      expect(res.status).toBe(201);
+      expect(res.body.acc_id).toBe(accUser.id);
+      expect(res.body.ammount).toBe('-100.00');
+    });
+});
+
 test('Deve retornar uma transação por ID', () => {
   return app.db('transactions').insert(
     { description: 'T ID', date: new Date(), ammount: 100, type: 'I', acc_id: accUser.id }, ['id']
