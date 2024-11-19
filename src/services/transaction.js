@@ -20,9 +20,15 @@ module.exports = (app) => {
   
   const update = (id, transaction) => {
     return app.db('transactions')
-      .where({id})
+      .where({id}) // iguais
       .update(transaction, '*');
   }
 
-  return { find, save, findOne, update};
+  const remove = (id) => {
+    return app.db('transactions')
+      .where({id: id}) // iguais
+      .del();
+  }
+
+  return { find, save, findOne, update, remove};
 };
