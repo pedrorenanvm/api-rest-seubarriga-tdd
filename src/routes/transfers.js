@@ -20,7 +20,12 @@ module.exports = (app) => {
     app.services.transfer.findOne({ id: req.params.id})
       .then((result) => res.status(200).json(result))
       .catch(err => next(err));
+  });
 
+  router.put('/:id', (req, res, next) => {
+    app.services.transfer.update(req.params.id, req.body)
+      .then(result => res.status(200).json(result[0]))
+      .catch(err => next(err));
   });
 
   return router
