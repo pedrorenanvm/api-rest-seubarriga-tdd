@@ -185,3 +185,28 @@ describe('Ao tentar alterar uma transferência inválida...', () => {
   test('Não deve inserir se as contas pertencerem a outro usuário', () => template({ acc_ori_id: 10002 }, 'Conta #10002 não pertence ao usuário'));
 
 });
+
+
+describe('Ao remover transfêrencia', () => { 
+    test('Deve retornar o status 204', () => {
+      return request(app).delete(`${MAIN_ROUTE}/10000`)
+        .set('authorization', `bearer ${TOKEN}`)
+        .then((res) => {
+          expect(res.status).toBe(204);
+        })
+    });
+
+    test('O registro deve ser apagado do banco', () => {
+      return app.db('transfers').where({ id: 10000 })
+        .then((result) => {
+          expect(result).toHaveLength(0);
+        });
+    });
+
+    test('As transações equivalentes devem ter sido removidas', () => {
+      return app.db('transactions').where({ transfer_id: 10000 })
+        .then((result) => {
+          expect(result).toHaveLength(0);
+        })
+    });
+});
